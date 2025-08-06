@@ -1,0 +1,32 @@
+# MCP Chrome Extension for t3.chat
+
+This is a Chrome extension built with Plasmo that adds Model Context Protocol (MCP) capabilities to t3.chat.
+
+## Project Context
+- **Purpose**: Integrate MCP functionality into t3.chat webapp
+- **Framework**: Plasmo for Chrome extension development
+- **Styling**: Tailwind CSS v3
+- **Target**: t3.chat website enhancement
+
+## Development Guidelines
+- Use context7 MCP for Plasmo documentation and best practices
+- Follow Plasmo conventions for content scripts and UI components
+- Implement MCP protocol integration for t3.chat
+- Use Tailwind CSS for all styling
+- Focus on seamless integration with t3.chat UI/UX
+- Organize components in separate files for maintainability
+
+## Component Structure
+- Keep components modular and reusable
+- Use TypeScript interfaces for type safety
+- Store types in `src/types/` directory
+- Store utilities in `src/utils/` directory
+- Store components in `src/components/` directory
+- Use kebab-case for all file names (e.g., `mcp-server-form.tsx`)
+- Prefer named exports over default exports for consistency
+- Convert user-input names to kebab-case using lodash
+
+## Styling Standards
+- Consistent Tailwind classes for forms, buttons, and layouts
+- Use Radix UI for complex component behaviors
+- Maintain clean, accessible UI patterns
