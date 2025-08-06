@@ -1,22 +1,22 @@
-import { Plus } from "lucide-react"
-import { useState } from "react"
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 interface MCPServerFormProps {
-  onAddServer: (name: string, url: string) => void
+  onAddServer: (name: string, url: string) => void;
 }
 
 export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
-  const [name, setName] = useState("")
-  const [url, setUrl] = useState("")
+  const [name, setName] = useState("");
+  const [url, setUrl] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (name.trim() && url.trim()) {
-      onAddServer(name.trim(), url.trim())
-      setName("")
-      setUrl("")
+      onAddServer(name.trim(), url.trim());
+      setName("");
+      setUrl("");
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 mb-6">
@@ -41,11 +41,10 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
       <button
         type="submit"
         disabled={!name.trim() || !url.trim()}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
+        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
         <Plus size={16} />
         Add Server
       </button>
     </form>
-  )
-}
+  );
+};
