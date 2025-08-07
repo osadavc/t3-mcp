@@ -51,7 +51,7 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
       <div>
         <input
           type="url"
-          placeholder="Server URL (e.g., http://localhost:3000/mcp or https://api.example.com/mcp)"
+          placeholder="Server URL (StreamableHTTP URL)"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           disabled={isLoading}

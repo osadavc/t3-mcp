@@ -34,9 +34,9 @@ export const MCPServerList = ({
   }
 
   return (
-    <Accordion.Root 
-      type="single" 
-      collapsible 
+    <Accordion.Root
+      type="single"
+      collapsible
       className="space-y-2"
       value={openAccordion}
       onValueChange={setOpenAccordion}>
@@ -44,13 +44,13 @@ export const MCPServerList = ({
         <Accordion.Item
           key={server.id}
           value={server.id}
-          className={`border border-gray-200 rounded-md overflow-hidden ${!server.isEnabled ? 'opacity-50' : ''}`}>
+          className={`border border-gray-200 rounded-md overflow-hidden ${!server.isEnabled ? "opacity-50" : ""}`}>
           <Accordion.Header>
-            <Accordion.Trigger 
+            <Accordion.Trigger
               className={`w-full flex items-center justify-between p-3 text-left transition-colors ${
-                server.isEnabled 
-                  ? 'bg-gray-50 hover:bg-gray-100' 
-                  : 'bg-gray-100 cursor-not-allowed'
+                server.isEnabled
+                  ? "bg-gray-50 hover:bg-gray-100"
+                  : "bg-gray-100 cursor-not-allowed"
               }`}
               onClick={(e) => {
                 if (!server.isEnabled) {
@@ -67,7 +67,9 @@ export const MCPServerList = ({
                     <XCircle size={12} className="text-red-600" />
                   )}
                   {!server.isEnabled && (
-                    <span className="text-xs bg-gray-300 text-gray-500 px-2 py-0.5 rounded">Disabled</span>
+                    <span className="text-xs bg-gray-300 text-gray-500 px-2 py-0.5 rounded">
+                      Disabled
+                    </span>
                   )}
                 </div>
                 <div className="text-xs text-gray-500 truncate">
@@ -107,29 +109,40 @@ export const MCPServerList = ({
           <Accordion.Content className="p-3 bg-white">
             <div className="text-sm text-gray-600 space-y-3">
               <div>
-                <p><strong>URL:</strong> {server.url}</p>
+                <p>
+                  <strong>URL:</strong> {server.url}
+                </p>
                 {server.connectionError && (
-                  <p className="text-red-600"><strong>Error:</strong> {server.connectionError}</p>
+                  <p className="text-red-600">
+                    <strong>Error:</strong> {server.connectionError}
+                  </p>
                 )}
               </div>
 
               {server.tools && server.tools.length > 0 ? (
                 <div>
-                  <h4 className="font-medium mb-2">Available Tools ({server.tools.length}):</h4>
+                  <h4 className="font-medium mb-2">
+                    Available Tools ({server.tools.length}):
+                  </h4>
                   <div className="space-y-2">
                     {server.tools.map((tool, index) => (
-                      <div key={index} className="p-2 bg-gray-50 rounded border">
+                      <div
+                        key={index}
+                        className="p-2 bg-gray-50 rounded border">
                         <div className="font-medium text-sm">{tool.name}</div>
                         {tool.description && (
                           <div className="text-xs text-gray-600 mt-1">
-                            {tool.description.length > 100 
-                              ? `${tool.description.slice(0, 100)}...` 
+                            {tool.description.length > 100
+                              ? `${tool.description.slice(0, 100)}...`
                               : tool.description}
                           </div>
                         )}
                         {tool.inputSchema?.properties && (
                           <div className="text-xs text-gray-500 mt-1">
-                            Parameters: {Object.keys(tool.inputSchema.properties).join(", ")}
+                            Parameters:{" "}
+                            {Object.keys(tool.inputSchema.properties).join(
+                              ", "
+                            )}
                           </div>
                         )}
                       </div>

@@ -1,6 +1,5 @@
 import * as z from "zod";
 
-// MCP Tool schema from SDK
 export const MCPToolInputSchema = z.record(z.string(), z.any());
 
 export const MCPToolSchema = z.object({
@@ -16,7 +15,6 @@ export const MCPToolSchema = z.object({
     .optional()
 });
 
-// Our extended server schema with tools and connection status
 export const MCPServerSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -29,6 +27,5 @@ export const MCPServerSchema = z.object({
   lastConnected: z.number().optional()
 });
 
-// Derive TypeScript types from Zod schemas
 export type MCPTool = z.infer<typeof MCPToolSchema>;
 export type MCPServer = z.infer<typeof MCPServerSchema>;
