@@ -11,7 +11,7 @@ import { MCPServerForm } from "~components/mcp-server-form";
 import { MCPServerList } from "~components/mcp-server-list";
 import { useOutsideClick } from "~hooks/use-outside-click";
 import type { MCPServer } from "~types/mcp";
-import { MCPStorage } from "~utils/mcpStorage";
+import { MCPStorage } from "~utils/mcp-storage";
 
 export const config: PlasmoCSConfig = {
   matches: ["https://t3.chat/*"]
@@ -39,12 +39,11 @@ const Sidebar = () => {
 
   useEffect(() => {
     const messageListener = (message: any, sender: any, sendResponse: any) => {
-      if (message.name === "toggle-sidebar") {
+      if (message.action === "toggle-sidebar-visibility") {
         setIsVisible((prev) => !prev);
         sendResponse({ success: true });
       }
     };
-
     chrome.runtime.onMessage.addListener(messageListener);
 
     return () => {
