@@ -1,8 +1,14 @@
 import { kebabCase } from "lodash";
 
+import { sendToBackground } from "@plasmohq/messaging";
 import { Storage } from "@plasmohq/storage";
 
+import type {
+  MCPOperationRequest,
+  MCPOperationResponse
+} from "~background/messages/mcp-operations";
 import type { MCPServer } from "~types/mcp";
+import { MCPServerSchema } from "~types/mcp";
 
 const storage = new Storage();
 const MCP_SERVERS_KEY = "mcp_servers";
@@ -14,16 +20,43 @@ export class MCPStorage {
   }
 
   static async addServer(name: string, url: string): Promise<MCPServer> {
+    const connectionResult = await sendToBackground<
+      MCPOperationRequest,
+      MCPOperationResponse
+    >({
+      name: "mcp-operations",
+      body: {
+        operation: "test-connection",
+        serverUrl: url.trim()
+      }
+    });
+
+    if (!connectionResult.success) {
+      throw new Error(
+        `Failed to connect to MCP server: ${connectionResult.error}`
+      );
+    }
+
     const servers = await this.getServers();
-    const newServer: MCPServer = {
+
+    // Create server with connection results
+    const serverData = {
       id: crypto.randomUUID(),
       name: kebabCase(name.trim()),
       url: url.trim(),
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      tools: connectionResult.tools,
+      isConnected: true,
+      isEnabled: true,
+      lastConnected: Date.now()
     };
+
+    // Validate with Zod schema
+    const newServer = MCPServerSchema.parse(serverData);
 
     const updatedServers = [...servers, newServer];
     await storage.set(MCP_SERVERS_KEY, updatedServers);
+
     return newServer;
   }
 

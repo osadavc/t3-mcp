@@ -56,13 +56,18 @@ const Sidebar = () => {
     setMcpServers(servers);
   };
 
-  const handleAddServer = async (name: string, url: string) => {
+  const handleAddServer = async (name: string, url: string): Promise<void> => {
     await MCPStorage.addServer(name, url);
     await loadServers();
   };
 
   const handleRemoveServer = async (id: string) => {
     await MCPStorage.removeServer(id);
+    await loadServers();
+  };
+
+  const handleToggleServer = async (id: string, enabled: boolean) => {
+    await MCPStorage.updateServer(id, { isEnabled: enabled });
     await loadServers();
   };
 
@@ -113,6 +118,7 @@ const Sidebar = () => {
           <MCPServerList
             servers={mcpServers}
             onRemoveServer={handleRemoveServer}
+            onToggleServer={handleToggleServer}
           />
         </div>
       </div>
