@@ -1,11 +1,14 @@
 import { kebabCase } from "lodash";
 
-import { Storage } from "@plasmohq/storage";
 import { sendToBackground } from "@plasmohq/messaging";
+import { Storage } from "@plasmohq/storage";
 
-import type { MCPServer, MCPTool } from "~types/mcp";
+import type {
+  MCPOperationRequest,
+  MCPOperationResponse
+} from "~background/messages/mcp-operations";
+import type { MCPServer } from "~types/mcp";
 import { MCPServerSchema } from "~types/mcp";
-import type { MCPOperationRequest, MCPOperationResponse } from "~background/messages/mcp-operations";
 
 const storage = new Storage();
 const MCP_SERVERS_KEY = "mcp_servers";
@@ -17,25 +20,25 @@ export class MCPStorage {
   }
 
   static async addServer(name: string, url: string): Promise<MCPServer> {
-    console.log(`[MCP Storage] Testing connection via background script...`);
-    
-    // Test MCP connection via background script to avoid CORS issues
-    const connectionResult = await sendToBackground<MCPOperationRequest, MCPOperationResponse>({
+    const connectionResult = await sendToBackground<
+      MCPOperationRequest,
+      MCPOperationResponse
+    >({
       name: "mcp-operations",
       body: {
         operation: "test-connection",
         serverUrl: url.trim()
       }
     });
-    
-    console.log(`[MCP Storage] Background connection result:`, connectionResult);
-    
+
     if (!connectionResult.success) {
-      throw new Error(`Failed to connect to MCP server: ${connectionResult.error}`);
+      throw new Error(
+        `Failed to connect to MCP server: ${connectionResult.error}`
+      );
     }
 
     const servers = await this.getServers();
-    
+
     // Create server with connection results
     const serverData = {
       id: crypto.randomUUID(),
@@ -48,15 +51,12 @@ export class MCPStorage {
       lastConnected: Date.now()
     };
 
-    console.log(`[MCP Storage] Creating server with data:`, serverData);
-
     // Validate with Zod schema
     const newServer = MCPServerSchema.parse(serverData);
 
     const updatedServers = [...servers, newServer];
     await storage.set(MCP_SERVERS_KEY, updatedServers);
-    
-    console.log(`[MCP Storage] ✅ Successfully added server: ${newServer.name}`);
+
     return newServer;
   }
 
