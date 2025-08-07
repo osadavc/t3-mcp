@@ -5,7 +5,7 @@ import { sendToBackground } from "@plasmohq/messaging";
 
 import type { MCPServer, MCPTool } from "~types/mcp";
 import { MCPServerSchema } from "~types/mcp";
-import type { TestMCPConnectionRequest, TestMCPConnectionResponse } from "~background/messages/test-mcp-connection";
+import type { MCPOperationRequest, MCPOperationResponse } from "~background/messages/mcp-operations";
 
 const storage = new Storage();
 const MCP_SERVERS_KEY = "mcp_servers";
@@ -20,9 +20,10 @@ export class MCPStorage {
     console.log(`[MCP Storage] Testing connection via background script...`);
     
     // Test MCP connection via background script to avoid CORS issues
-    const connectionResult = await sendToBackground<TestMCPConnectionRequest, TestMCPConnectionResponse>({
-      name: "test-mcp-connection",
+    const connectionResult = await sendToBackground<MCPOperationRequest, MCPOperationResponse>({
+      name: "mcp-operations",
       body: {
+        operation: "test-connection",
         serverUrl: url.trim()
       }
     });
