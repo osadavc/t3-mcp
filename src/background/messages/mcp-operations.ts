@@ -1,5 +1,4 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 
 import type { PlasmoMessaging } from "@plasmohq/messaging";
@@ -27,38 +26,27 @@ export type MCPOperationResponse = {
 class BackgroundMCPClient {
   private async createConnection(serverUrl: string): Promise<{
     client: Client;
-    transport: StreamableHTTPClientTransport | SSEClientTransport;
+    transport: StreamableHTTPClientTransport;
   }> {
-    console.log(`[Background MCP] 🔗 Creating connection to: ${serverUrl}`);
-
     const url = new URL(serverUrl);
-    console.log(
-      `[Background MCP] Parsed URL - protocol: ${url.protocol}, host: ${url.host}`
-    );
 
     const client = new Client({
       name: "t3-mcp-extension-bg",
       version: "1.0.0"
     });
 
-    let transport: StreamableHTTPClientTransport | SSEClientTransport;
+    let transport: StreamableHTTPClientTransport;
 
-    // Try StreamableHTTP first, then fall back to SSE
     if (url.protocol === "http:" || url.protocol === "https:") {
       try {
         transport = new StreamableHTTPClientTransport(url);
       } catch (streamableError) {
-        console.log(
-          `[Background MCP] StreamableHTTP failed, falling back to SSE:`,
-          streamableError
-        );
-        transport = new SSEClientTransport(url);
+        console.log(`[Background MCP] StreamableHTTP failed`, streamableError);
       }
     } else {
       throw new Error(`Unsupported protocol: ${url.protocol}`);
     }
 
-    // Add timeout to prevent hanging
     const connectPromise = client.connect(transport);
     const timeoutPromise = new Promise((_, reject) =>
       setTimeout(
@@ -77,8 +65,7 @@ class BackgroundMCPClient {
     serverUrl: string,
     operation: (client: Client) => Promise<T>
   ): Promise<T> {
-    let transport: StreamableHTTPClientTransport | SSEClientTransport | null =
-      null;
+    let transport: StreamableHTTPClientTransport | null = null;
 
     try {
       const { client, transport: conn } =
@@ -86,8 +73,6 @@ class BackgroundMCPClient {
       transport = conn;
       return await operation(client);
     } finally {
-      // Cleanup
-      console.log(`[Background MCP] 🧹 Cleaning up connection...`);
       try {
         if (transport) {
           transport.close();
@@ -99,28 +84,18 @@ class BackgroundMCPClient {
   }
 
   async testConnection(serverUrl: string): Promise<MCPOperationResponse> {
-    console.log(`[Background MCP] 🧪 Testing connection to: ${serverUrl}`);
-
     try {
       const tools = await this.executeWithConnection(
         serverUrl,
         async (client) => {
-          console.log(`[Background MCP] Listing tools...`);
           const response = await client.listTools();
-          console.log(`[Background MCP] Received tools response:`, response);
 
           const tools: MCPTool[] = [];
-          console.log(
-            `[Background MCP] Processing ${response.tools.length} tools...`
-          );
 
           for (const tool of response.tools) {
             try {
               const parsedTool = MCPToolSchema.parse(tool);
               tools.push(parsedTool);
-              console.log(
-                `[Background MCP] ✅ Successfully parsed tool: ${tool.name}`
-              );
             } catch (parseError) {
               console.warn(
                 `[Background MCP] ⚠️ Failed to parse tool ${tool.name}:`,
@@ -133,9 +108,6 @@ class BackgroundMCPClient {
         }
       );
 
-      console.log(
-        `[Background MCP] ✅ Test successful! Found ${tools.length} tools`
-      );
       return { success: true, tools };
     } catch (error) {
       const errorMessage =
@@ -146,8 +118,6 @@ class BackgroundMCPClient {
   }
 
   async listTools(serverUrl: string): Promise<MCPOperationResponse> {
-    console.log(`[Background MCP] 📋 Listing tools for: ${serverUrl}`);
-
     try {
       const tools = await this.executeWithConnection(
         serverUrl,
@@ -185,10 +155,6 @@ class BackgroundMCPClient {
     toolName: string,
     arguments_: Record<string, any> = {}
   ): Promise<MCPOperationResponse> {
-    console.log(
-      `[Background MCP] 🔧 Calling tool '${toolName}' on: ${serverUrl}`
-    );
-
     try {
       const data = await this.executeWithConnection(
         serverUrl,
@@ -249,7 +215,6 @@ const handler: PlasmoMessaging.MessageHandler<
   MCPOperationRequest,
   MCPOperationResponse
 > = async (req, res) => {
-  console.log(`[Background MCP] 📨 Received operation: ${req.body.operation}`);
   const result = await backgroundMCPClient.handleOperation(req.body);
   res.send(result);
 };
