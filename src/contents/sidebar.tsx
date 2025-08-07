@@ -66,6 +66,11 @@ const Sidebar = () => {
     await loadServers();
   };
 
+  const handleToggleServer = async (id: string, enabled: boolean) => {
+    await MCPStorage.updateServer(id, { isEnabled: enabled });
+    await loadServers();
+  };
+
   const handleClearAll = async () => {
     if (window.confirm("Are you sure you want to clear all MCP servers?")) {
       await MCPStorage.clearAll();
@@ -113,6 +118,7 @@ const Sidebar = () => {
           <MCPServerList
             servers={mcpServers}
             onRemoveServer={handleRemoveServer}
+            onToggleServer={handleToggleServer}
           />
         </div>
       </div>

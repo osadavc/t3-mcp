@@ -16,7 +16,7 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
     if (name.trim() && url.trim()) {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         await onAddServer(name.trim(), url.trim());
         setName("");
@@ -36,7 +36,7 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
           <p className="text-sm text-red-600">{error}</p>
         </div>
       )}
-      
+
       <div>
         <input
           type="text"
@@ -47,7 +47,7 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
-      
+
       <div>
         <input
           type="url"
@@ -58,7 +58,7 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
-      
+
       <button
         type="submit"
         disabled={!name.trim() || !url.trim() || isLoading}
@@ -66,7 +66,7 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
         {isLoading ? (
           <>
             <Loader2 size={16} className="animate-spin" />
-            Connecting & Testing...
+            Connecting
           </>
         ) : (
           <>
