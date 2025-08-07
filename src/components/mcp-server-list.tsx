@@ -51,13 +51,7 @@ export const MCPServerList = ({
                 server.isEnabled
                   ? "bg-gray-50 hover:bg-gray-100"
                   : "bg-gray-100 cursor-not-allowed"
-              }`}
-              onClick={(e) => {
-                if (!server.isEnabled) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }
-              }}>
+              }`}>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-sm">{server.name}</span>
