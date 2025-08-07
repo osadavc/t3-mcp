@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 
 import { MCPServerForm } from "~components/mcp-server-form";
 import { MCPServerList } from "~components/mcp-server-list";
+import { useOutsideClick } from "~hooks/use-outside-click";
 import type { MCPServer } from "~types/mcp";
 import { MCPStorage } from "~utils/mcpStorage";
 
@@ -29,6 +30,12 @@ export const getOverlayAnchor: PlasmoGetOverlayAnchor = async () => {
 const Sidebar = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [mcpServers, setMcpServers] = useState<MCPServer[]>([]);
+
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
+  const sidebarRef = useOutsideClick(handleClose);
 
   useEffect(() => {
     const messageListener = (message: any, sender: any, sendResponse: any) => {
@@ -78,14 +85,12 @@ const Sidebar = () => {
     }
   };
 
-  const handleClose = () => {
-    setIsVisible(false);
-  };
-
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-0 right-0 h-full w-96 bg-white border-l z-[9999] flex flex-col shadow-sm">
+    <div
+      ref={sidebarRef}
+      className="fixed top-0 right-0 h-full w-96 bg-white border-l z-[9999] flex flex-col shadow-sm">
       <div className="flex items-center justify-between p-4 border-b">
         <h1 className="text-lg font-semibold">T3 MCP</h1>
         <div className="flex items-center gap-2">
