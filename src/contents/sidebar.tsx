@@ -56,7 +56,7 @@ const Sidebar = () => {
     setMcpServers(servers);
   };
 
-  const handleAddServer = async (name: string, url: string) => {
+  const handleAddServer = async (name: string, url: string): Promise<void> => {
     await MCPStorage.addServer(name, url);
     await loadServers();
   };
