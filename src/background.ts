@@ -15,6 +15,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
       }
     });
+  } else if (message.action === "mcp-servers-updated") {
+    chrome.tabs.query(
+      { url: ["https://t3.chat/*", "http://t3.chat/*"] },
+      (tabs) => {
+        for (const tab of tabs) {
+          if (tab.id) {
+            chrome.tabs.sendMessage(tab.id, { action: "mcp-servers-updated" });
+          }
+        }
+      }
+    );
   }
   return true;
 });

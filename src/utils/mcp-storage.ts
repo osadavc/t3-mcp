@@ -14,6 +14,11 @@ const storage = new Storage();
 const MCP_SERVERS_KEY = "mcp_servers";
 
 export class MCPStorage {
+  private static notifyServersChanged = () => {
+    try {
+      chrome.runtime?.sendMessage?.({ action: "mcp-servers-updated" });
+    } catch {}
+  };
   static async getServers(): Promise<MCPServer[]> {
     const servers = await storage.get<MCPServer[]>(MCP_SERVERS_KEY);
     return servers || [];
@@ -56,6 +61,7 @@ export class MCPStorage {
 
     const updatedServers = [...servers, newServer];
     await storage.set(MCP_SERVERS_KEY, updatedServers);
+    this.notifyServersChanged();
 
     return newServer;
   }
@@ -64,6 +70,7 @@ export class MCPStorage {
     const servers = await this.getServers();
     const filteredServers = servers.filter((server) => server.id !== id);
     await storage.set(MCP_SERVERS_KEY, filteredServers);
+    this.notifyServersChanged();
   }
 
   static async updateServer(
@@ -75,9 +82,11 @@ export class MCPStorage {
       server.id === id ? { ...server, ...updates } : server
     );
     await storage.set(MCP_SERVERS_KEY, updatedServers);
+    this.notifyServersChanged();
   }
 
   static async clearAll(): Promise<void> {
     await storage.remove(MCP_SERVERS_KEY);
+    this.notifyServersChanged();
   }
 }
