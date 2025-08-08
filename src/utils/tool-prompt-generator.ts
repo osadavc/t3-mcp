@@ -21,10 +21,11 @@ In this environment you have access to a set of tools you can use to answer the 
 - Optional parameters should only be included when needed
 
 ## Function Invocation Protocol:
-When you need to use a tool, format your request as a JSON object:
+When you need to use a tool, format your request as a JSON object. To distinguish your tool calls from arbitrary JSON the user might ask you to produce, you MUST include the special marker "__t3_mcp_call": true at the top level of the JSON object:
 
 \`\`\`json
 {
+  "__t3_mcp_call": true,
   "tool": "function_name",
   "parameters": {
     "param1": "value1", 
@@ -35,6 +36,7 @@ When you need to use a tool, format your request as a JSON object:
 
 ## Critical Instructions:
 1. ALWAYS analyze what function calls would be appropriate for the task
+2. ALWAYS include the special marker "__t3_mcp_call": true in every tool call JSON
 2. ALWAYS format your function usage EXACTLY as specified in the schema
 3. NEVER skip required parameters in function calls
 4. NEVER invent functions that aren't available to you
@@ -79,7 +81,7 @@ ${tools
         }
       );
 
-      toolDoc += `\n**Example**:\n\`\`\`json\n{\n  "tool": "${tool.name}",\n  "parameters": {${Object.keys(
+      toolDoc += `\n**Example**:\n\`\`\`json\n{\n  "__t3_mcp_call": true,\n  "tool": "${tool.name}",\n  "parameters": {${Object.keys(
         tool.inputSchema.properties
       )
         .map((param) => {
@@ -93,7 +95,7 @@ ${tools
         })
         .join(",")}\n  }\n}\n\`\`\`\n`;
     } else {
-      toolDoc += `**Parameters**: None required\n\n**Example**:\n\`\`\`json\n{\n  "tool": "${tool.name}",\n  "parameters": {}\n}\n\`\`\`\n`;
+      toolDoc += `**Parameters**: None required\n\n**Example**:\n\`\`\`json\n{\n  "__t3_mcp_call": true,\n  "tool": "${tool.name}",\n  "parameters": {}\n}\n\`\`\`\n`;
     }
 
     return toolDoc;
