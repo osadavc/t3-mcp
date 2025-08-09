@@ -19,12 +19,12 @@ export const MCPServerList = ({
   const [openAccordion, setOpenAccordion] = useState<string | undefined>();
 
   const handleToggleServer = (serverId: string, enabled: boolean) => {
-    // Close accordion if disabling the server
     if (!enabled && openAccordion === serverId) {
       setOpenAccordion(undefined);
     }
     onToggleServer(serverId, enabled);
   };
+
   if (servers.length === 0) {
     return (
       <div className="text-gray-500 text-sm text-center py-8">
@@ -52,9 +52,11 @@ export const MCPServerList = ({
                   ? "bg-gray-50 hover:bg-gray-100"
                   : "bg-gray-100 cursor-not-allowed"
               }`}>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm">{server.name}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-medium text-sm truncate">
+                    {server.name}
+                  </span>
                   {server.isConnected ? (
                     <CheckCircle size={12} className="text-green-600" />
                   ) : (
@@ -73,14 +75,14 @@ export const MCPServerList = ({
                   {server.tools?.length || 0} tools available
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <Switch.Root
                   checked={server.isEnabled}
                   onCheckedChange={(checked) => {
                     handleToggleServer(server.id, checked);
                   }}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-9 h-5 bg-gray-200 rounded-full relative data-[state=checked]:bg-blue-500 outline-none cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 shadow-inner p-0.5"
+                  className="w-9 h-5 bg-gray-200 rounded-full relative data-[state=checked]:mcp-primary-bg outline-none cursor-pointer transition-all duration-200 focus:ring-2 mcp-primary-ring focus:ring-offset-1 shadow-inner p-0.5"
                   title={server.isEnabled ? "Disable server" : "Enable server"}>
                   <Switch.Thumb className="block w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-200 translate-x-0 data-[state=checked]:translate-x-4 ring-0 border border-gray-300" />
                 </Switch.Root>

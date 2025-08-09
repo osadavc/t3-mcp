@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .mcp-primary-bg {
+    background-color: hsl(320 100% 75%);
+  }
+
+  .mcp-primary-hover {
+    background-color: hsl(320 100% 75% / 0.9);
+  }
+
+  .mcp-primary-ring {
+    --tw-ring-color: hsl(320 100% 75% / 0.5);
+  }
+
+  .mcp-primary-border {
+    border-color: hsl(320 100% 75%);
+  }
+
+  /* Additional utility classes for inline style components */
+  .mcp-btn-primary {
+    background-color: hsl(320 100% 75%);
+    border-color: hsl(320 100% 75%);
+  }
+
+  .mcp-btn-primary-disabled {
+    background-color: hsl(320 100% 75% / 0.6);
+    border-color: hsl(320 100% 75% / 0.6);
+  }
+}

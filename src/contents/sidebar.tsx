@@ -1,3 +1,4 @@
+import * as Switch from "@radix-ui/react-switch";
 import cssText from "data-text:~style.css";
 import { Trash2, X } from "lucide-react";
 import type {
@@ -30,6 +31,7 @@ export const getOverlayAnchor: PlasmoGetOverlayAnchor = async () => {
 const Sidebar = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [mcpServers, setMcpServers] = useState<MCPServer[]>([]);
+  const [autoCallTools, setAutoCallTools] = useState<boolean>(false);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -54,12 +56,18 @@ const Sidebar = () => {
   useEffect(() => {
     if (isVisible) {
       loadServers();
+      loadSettings();
     }
   }, [isVisible]);
 
   const loadServers = async () => {
     const servers = await MCPStorage.getServers();
     setMcpServers(servers);
+  };
+
+  const loadSettings = async () => {
+    const settings = await MCPStorage.getSettings();
+    setAutoCallTools(settings.autoCallTools);
   };
 
   const handleAddServer = async (name: string, url: string): Promise<void> => {
@@ -82,6 +90,11 @@ const Sidebar = () => {
       await MCPStorage.clearAll();
       await loadServers();
     }
+  };
+
+  const handleToggleAutoCall = async (checked: boolean) => {
+    setAutoCallTools(checked);
+    await MCPStorage.updateSettings({ autoCallTools: checked });
   };
 
   if (!isVisible) return null;
@@ -108,6 +121,23 @@ const Sidebar = () => {
         </div>
       </div>
       <div className="flex-1 p-4 overflow-y-auto">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-medium text-gray-700">
+              Auto-run tool calls
+            </div>
+            <div className="text-xs text-gray-500">
+              Automatically execute detected tool calls
+            </div>
+          </div>
+          <Switch.Root
+            checked={autoCallTools}
+            onCheckedChange={handleToggleAutoCall}
+            className="w-10 h-6 bg-gray-200 rounded-full relative data-[state=checked]:mcp-primary-bg outline-none cursor-pointer transition-all duration-200 focus:ring-2 mcp-primary-ring focus:ring-offset-1 shadow-inner p-0.5"
+            title={autoCallTools ? "Disable auto-run" : "Enable auto-run"}>
+            <Switch.Thumb className="block w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-200 translate-x-0 data-[state=checked]:translate-x-4 ring-0 border border-gray-300" />
+          </Switch.Root>
+        </div>
         <div className="mb-6">
           <h2 className="text-sm font-medium text-gray-700 mb-3">
             Add MCP Server

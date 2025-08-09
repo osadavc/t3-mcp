@@ -9,11 +9,14 @@ import type {
 } from "~background/messages/mcp-operations";
 import type { MCPServer } from "~types/mcp";
 import { MCPServerSchema } from "~types/mcp";
+import type { MCPSettings } from "~types/settings";
+import { MCPSettingsSchema } from "~types/settings";
 
 const storage = new Storage({
   area: "local"
 });
 const MCP_SERVERS_KEY = "mcp_servers";
+const MCP_SETTINGS_KEY = "mcp_settings";
 
 export class MCPStorage {
   private static notifyServersChanged = () => {
@@ -21,6 +24,13 @@ export class MCPStorage {
       chrome.runtime?.sendMessage?.({ action: "mcp-servers-updated" });
     } catch {}
   };
+
+  private static notifySettingsChanged = () => {
+    try {
+      chrome.runtime?.sendMessage?.({ action: "mcp-settings-updated" });
+    } catch {}
+  };
+
   static async getServers(): Promise<MCPServer[]> {
     const servers = await storage.get<MCPServer[]>(MCP_SERVERS_KEY);
     return servers || [];
@@ -90,5 +100,26 @@ export class MCPStorage {
   static async clearAll(): Promise<void> {
     await storage.remove(MCP_SERVERS_KEY);
     this.notifyServersChanged();
+  }
+
+  // Settings helpers
+  static async getSettings(): Promise<MCPSettings> {
+    const raw = await storage.get<Partial<MCPSettings>>(MCP_SETTINGS_KEY);
+    const parsed = MCPSettingsSchema.safeParse(raw || {});
+
+    if (parsed.success) return parsed.data;
+    return { autoCallTools: false };
+  }
+
+  static async updateSettings(
+    update: Partial<MCPSettings>
+  ): Promise<MCPSettings> {
+    const current = await this.getSettings();
+    const next = { ...current, ...update } as MCPSettings;
+
+    await storage.set(MCP_SETTINGS_KEY, next);
+    this.notifySettingsChanged();
+
+    return next;
   }
 }

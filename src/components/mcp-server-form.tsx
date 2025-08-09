@@ -29,6 +29,12 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "/") {
+      e.stopPropagation();
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3 mb-6">
       {error && (
@@ -43,8 +49,9 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
           placeholder="Server name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          onKeyDown={handleKeyDown}
           disabled={isLoading}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 mcp-primary-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -54,15 +61,16 @@ export const MCPServerForm = ({ onAddServer }: MCPServerFormProps) => {
           placeholder="Server URL (StreamableHTTP URL)"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          onKeyDown={handleKeyDown}
           disabled={isLoading}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 mcp-primary-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
       <button
         type="submit"
         disabled={!name.trim() || !url.trim() || isLoading}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+        className="w-full flex items-center justify-center gap-2 px-4 py-2 mcp-primary-bg text-white rounded-md hover:mcp-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
         {isLoading ? (
           <>
             <Loader2 size={16} className="animate-spin" />
