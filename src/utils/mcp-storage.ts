@@ -10,7 +10,9 @@ import type {
 import type { MCPServer } from "~types/mcp";
 import { MCPServerSchema } from "~types/mcp";
 
-const storage = new Storage();
+const storage = new Storage({
+  area: "local"
+});
 const MCP_SERVERS_KEY = "mcp_servers";
 
 export class MCPStorage {
